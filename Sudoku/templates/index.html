@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sudoku Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Sudoku Game</h1>
+    <form method="post" action="/solve">
+        <div class="sudoku-board">
+            {% for i in range(9) %}
+                {% for j in range(9) %}
+                    <input type="text" maxlength="1" name="cell{{i}}{{j}}" 
+                        value="{{ puzzle[i][j] if puzzle[i][j] != 0 else '' }}">
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="buttons">
+            <button type="submit">Solve</button>
+            <a href="/" class="new-game">New Game</a>
+        </div>
+    </form>
+</body>
+</html>
