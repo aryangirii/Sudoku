@@ -2,18 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Select Difficulty</title>
+  <title>Select Difficulty Level</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
-<body class="game-screen">
+<body>
   <div class="container">
-    <div class="header">
-      <h1>Select Difficulty</h1>
-    </div>
+    <h1>Select Difficulty Level</h1>
     <div class="button-group">
-      <button onclick="window.location.href='{{ url_for('game', level='easy') }}'">Easy</button>
-      <button onclick="window.location.href='{{ url_for('game', level='medium') }}'">Medium</button>
-      <button onclick="window.location.href='{{ url_for('game', level='hard') }}'">Hard</button>
+      <a href="{{ url_for('game', level='easy') }}" class="button">Easy</a>
+      <a href="{{ url_for('game', level='medium') }}" class="button">Medium</a>
+      <a href="{{ url_for('game', level='hard') }}" class="button">Hard</a>
     </div>
   </div>
 </body>
