@@ -1,24 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Sudoku Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <h1>Sudoku Game</h1>
-    <form method="post" action="/solve">
+    <form method="get" action="/">
+        <label>Select Difficulty:</label>
+        <select name="level">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+        <button type="submit">Start New Game</button>
+    </form>
+
+    <div class="info-bar">
+        <div>⏱️ Time: <span id="timer">00:00</span></div>
+        <div>❌ Mistakes: <span id="mistakes">0</span></div>
+    </div>
+
+    <form method="post" action="/solve" onsubmit="return stopTimer();">
         <div class="sudoku-board">
             {% for i in range(9) %}
                 {% for j in range(9) %}
                     <input type="text" maxlength="1" name="cell{{i}}{{j}}" 
-                        value="{{ puzzle[i][j] if puzzle[i][j] != 0 else '' }}">
+                        value="{{ puzzle[i][j] if puzzle[i][j] != 0 else '' }}"
+                        oninput="validateCell(this)">
                 {% endfor %}
             {% endfor %}
         </div>
-        <div class="buttons">
-            <button type="submit">Solve</button>
-            <a href="/" class="new-game">New Game</a>
-        </div>
+        <button type="submit">Solve</button>
     </form>
+
+    <script>
+        let startTime = Date.now();
+        let timerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
+            const seconds = String(elapsed % 60).padStart(2, '0');
+            document.getElementById("timer").textContent = `${minutes}:${seconds}`;
+        }, 1000);
+
+        let mistakes = 0;
+        function validateCell(input) {
+            const value = input.value;
+            if (value && (!/^[1-9]$/.test(value))) {
+                mistakes++;
+                document.getElementById("mistakes").textContent = mistakes;
+                input.value = '';
+            }
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            return true;
+        }
+    </script>
 </body>
 </html>
