@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Play Sudoku</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="game-screen">
+  <div class="container">
+    <div class="header">
+      <h1>Sudoku - {{ level.capitalize() }}</h1>
+      <div class="game-info">
+        <span id="timer">Time: 00:00</span>
+        <span id="mistakes">Mistakes: 0</span>
+      </div>
+    </div>
+
+    <div class="sudoku-grid">
+      {% for row in puzzle %}
+        <div class="sudoku-row">
+          {% for cell in row %}
+            <input maxlength="1" class="sudoku-cell" value="{{ cell if cell != 0 else '' }}" {{ 'readonly' if cell != 0 else '' }}>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script>
+    let startTime = Date.now();
+    let timer = document.getElementById('timer');
+    let mistakes = 0;
+
+    setInterval(() => {
+      let elapsed = Math.floor((Date.now() - startTime) / 1000);
+      let minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      let seconds = String(elapsed % 60).padStart(2, '0');
+      timer.textContent = `Time: ${minutes}:${seconds}`;
+    }, 1000);
+
+    document.querySelectorAll('.sudoku-cell').forEach(cell => {
+      cell.addEventListener('input', () => {
+        if (cell.value && isNaN(parseInt(cell.value))) {
+          cell.value = '';
+        }
+        // Custom logic can go here for mistake count
+      });
+    });
+  </script>
+</body>
+</html>
