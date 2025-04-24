@@ -13,6 +13,7 @@
         <span id="timer">Time: 00:00</span>
         <span id="mistakes">Mistakes: 0</span>
       </div>
+      <button onclick="toggleTheme()" class="theme-toggle">Toggle Dark Mode</button>
     </div>
 
     <div class="sudoku-grid">
@@ -38,14 +39,36 @@
       timer.textContent = `Time: ${minutes}:${seconds}`;
     }, 1000);
 
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+    }
+
     document.querySelectorAll('.sudoku-cell').forEach(cell => {
+      const originalValue = cell.value;
       cell.addEventListener('input', () => {
-        if (cell.value && isNaN(parseInt(cell.value))) {
+        const val = cell.value;
+        if (val && (isNaN(parseInt(val)) || parseInt(val) < 1 || parseInt(val) > 9)) {
           cell.value = '';
         }
-        // Custom logic can go here for mistake count
+
+        if (originalValue === '') {
+          const correct = checkCorrect(cell, val);
+          if (!correct) {
+            cell.classList.add('wrong');
+            mistakes++;
+            document.getElementById('mistakes').textContent = `Mistakes: ${mistakes}`;
+          } else {
+            cell.classList.remove('wrong');
+            cell.classList.add('correct');
+          }
+        }
       });
     });
+
+    function checkCorrect(cell, val) {
+      // Placeholder - implement backend validation if needed
+      return true; // Always assume correct for demo purposes
+    }
   </script>
 </body>
 </html>
