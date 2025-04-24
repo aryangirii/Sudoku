@@ -1,19 +1,26 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 import sudoku
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index():
-    puzzle = sudoku.generate_puzzle()
-    return render_template("index.html", puzzle=puzzle)
+    difficulty = request.args.get("level", "easy")
+    puzzle = sudoku.generate_puzzle(difficulty)
+    return render_template("index.html", puzzle=puzzle, difficulty=difficulty)
 
 @app.route("/solve", methods=["POST"])
 def solve():
-    board = [[int(x) if x else 0 for x in request.form.getlist(f"cell{r}{c}")] for r in range(9) for c in range(9)]
-    board = [board[i:i+9] for i in range(0, 81, 9)]
-    solved_board = sudoku.solve_sudoku(board)
-    return render_template("index.html", puzzle=solved_board)
+    board = []
+    for i in range(9):
+        row = []
+        for j in range(9):
+            val = request.form.get(f"cell{i}{j}")
+            row.append(int(val) if val and val.isdigit() else 0)
+        board.append(row)
 
-if __name__ == "__main__":
+    solved = sudoku.solve_board(board)
+    return render_template("index.html", puzzle=solved, difficulty="custom")
+
+if __name__ == '__main__':
     app.run(debug=True)
