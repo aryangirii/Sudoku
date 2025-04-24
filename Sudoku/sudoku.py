@@ -1,87 +1,64 @@
-from flask import Flask, render_template, request, redirect, url_for
 import random
-import copy
 
-app = Flask(__name__)
 
-# Sample puzzles by difficulty
-puzzles = {
-    'easy': [
-        [5, 3, 0, 0, 7, 0, 0, 0, 0],
-        [6, 0, 0, 1, 9, 5, 0, 0, 0],
-        [0, 9, 8, 0, 0, 0, 0, 6, 0],
-        [8, 0, 0, 0, 6, 0, 0, 0, 3],
-        [4, 0, 0, 8, 0, 3, 0, 0, 1],
-        [7, 0, 0, 0, 2, 0, 0, 0, 6],
-        [0, 6, 0, 0, 0, 0, 2, 8, 0],
-        [0, 0, 0, 4, 1, 9, 0, 0, 5],
-        [0, 0, 0, 0, 8, 0, 0, 7, 9]
-    ],
-    'medium': [
-        [0, 0, 0, 0, 6, 0, 0, 0, 0],
-        [0, 0, 0, 1, 0, 9, 0, 0, 0],
-        [0, 0, 3, 0, 0, 0, 4, 0, 0],
-        [0, 6, 0, 0, 0, 0, 0, 3, 0],
-        [7, 0, 0, 0, 0, 0, 0, 0, 8],
-        [0, 2, 0, 0, 0, 0, 0, 6, 0],
-        [0, 0, 1, 0, 0, 0, 7, 0, 0],
-        [0, 0, 0, 3, 0, 6, 0, 0, 0],
-        [0, 0, 0, 0, 2, 0, 0, 0, 0]
-    ],
-    'hard': [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 3, 0, 8, 5],
-        [0, 0, 1, 0, 2, 0, 0, 0, 0],
-        [0, 0, 0, 5, 0, 7, 0, 0, 0],
-        [0, 0, 4, 0, 0, 0, 1, 0, 0],
-        [0, 9, 0, 0, 0, 0, 0, 0, 0],
-        [5, 0, 0, 0, 0, 0, 0, 7, 3],
-        [0, 0, 2, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 4, 0, 0, 0, 9]
-    ]
-}
+def generate_puzzle(level):
+    board = [[0 for _ in range(9)] for _ in range(9)]
+    solve_board(board)
+    
+    if level == 'easy':
+        removals = 30
+    elif level == 'medium':
+        removals = 40
+    else:
+        removals = 50
 
-# Simple solver (for demonstration)
-def solve(board):
-    def is_valid(num, row, col):
-        for i in range(9):
-            if board[row][i] == num or board[i][col] == num:
+    while removals > 0:
+        row = random.randint(0, 8)
+        col = random.randint(0, 8)
+        if board[row][col] != 0:
+            board[row][col] = 0
+            removals -= 1
+
+    return board
+
+
+def solve_board(board):
+    empty = find_empty(board)
+    if not empty:
+        return board
+
+    row, col = empty
+    for num in range(1, 10):
+        if valid(board, num, (row, col)):
+            board[row][col] = num
+            if solve_board(board):
+                return board
+            board[row][col] = 0
+
+    return False
+
+
+def valid(board, num, pos):
+    for i in range(9):
+        if board[pos[0]][i] == num and pos[1] != i:
+            return False
+        if board[i][pos[1]] == num and pos[0] != i:
+            return False
+
+    box_x = pos[1] // 3
+    box_y = pos[0] // 3
+
+    for i in range(box_y * 3, box_y * 3 + 3):
+        for j in range(box_x * 3, box_x * 3 + 3):
+            if board[i][j] == num and (i, j) != pos:
                 return False
-        r, c = 3 * (row // 3), 3 * (col // 3)
-        for i in range(r, r + 3):
-            for j in range(c, c + 3):
-                if board[i][j] == num:
-                    return False
-        return True
 
+    return True
+
+
+def find_empty(board):
     for i in range(9):
         for j in range(9):
             if board[i][j] == 0:
-                for num in range(1, 10):
-                    if is_valid(num, i, j):
-                        board[i][j] = num
-                        if solve(board):
-                            return board
-                        board[i][j] = 0
-                return False
-    return board
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/level', endpoint='level')
-def choose_level():
-    return render_template('level.html')
-
-@app.route('/game/<level>')
-def game(level):
-    if level not in puzzles:
-        return redirect(url_for('level'))
-
-    puzzle = copy.deepcopy(puzzles[level])
-    solution = solve(copy.deepcopy(puzzle))
-    return render_template('game.html', puzzle=puzzle, solution=solution, level=level)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+                return (i, j)
+    return None
