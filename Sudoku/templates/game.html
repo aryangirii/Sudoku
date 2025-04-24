@@ -13,14 +13,20 @@
         <span id="timer">Time: 00:00</span>
         <span id="mistakes">Mistakes: 0</span>
       </div>
-      <button onclick="toggleTheme()" class="theme-toggle">Toggle Dark Mode</button>
+      <div class="button-group">
+        <button onclick="toggleTheme()" class="theme-toggle">Toggle Dark Mode</button>
+        <button onclick="window.location.href='{{ url_for('level') }}'" class="new-game">New Game</button>
+        <button onclick="exitGame()" class="exit-game">Exit Game</button>
+      </div>
     </div>
 
     <div class="sudoku-grid">
-      {% for row in puzzle %}
+      {% for i, row in enumerate(puzzle) %}
         <div class="sudoku-row">
-          {% for cell in row %}
-            <input maxlength="1" class="sudoku-cell" value="{{ cell if cell != 0 else '' }}" {{ 'readonly' if cell != 0 else '' }}>
+          {% for j, cell in enumerate(row) %}
+            <input maxlength="1" class="sudoku-cell" 
+                   data-row="{{ i }}" data-col="{{ j }}"
+                   value="{{ cell if cell != 0 else '' }}" {{ 'readonly' if cell != 0 else '' }}>
           {% endfor %}
         </div>
       {% endfor %}
@@ -28,6 +34,7 @@
   </div>
 
   <script>
+    const solution = {{ solution|tojson }};
     let startTime = Date.now();
     let timer = document.getElementById('timer');
     let mistakes = 0;
@@ -43,17 +50,28 @@
       document.body.classList.toggle('dark-mode');
     }
 
+    function exitGame() {
+      if (confirm("Are you sure you want to exit the game?")) {
+        window.location.href = '/';
+      }
+    }
+
     document.querySelectorAll('.sudoku-cell').forEach(cell => {
       const originalValue = cell.value;
       cell.addEventListener('input', () => {
         const val = cell.value;
+        const row = parseInt(cell.getAttribute('data-row'));
+        const col = parseInt(cell.getAttribute('data-col'));
+
         if (val && (isNaN(parseInt(val)) || parseInt(val) < 1 || parseInt(val) > 9)) {
           cell.value = '';
+          return;
         }
 
         if (originalValue === '') {
-          const correct = checkCorrect(cell, val);
+          const correct = parseInt(val) === solution[row][col];
           if (!correct) {
+            cell.classList.remove('correct');
             cell.classList.add('wrong');
             mistakes++;
             document.getElementById('mistakes').textContent = `Mistakes: ${mistakes}`;
@@ -64,11 +82,6 @@
         }
       });
     });
-
-    function checkCorrect(cell, val) {
-      // Placeholder - implement backend validation if needed
-      return true; // Always assume correct for demo purposes
-    }
   </script>
 </body>
 </html>
