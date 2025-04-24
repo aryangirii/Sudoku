@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Sudoku Game</h1>
+    <h1 class="fade-in">Sudoku Game</h1>
     <form method="get" action="/">
         <label>Select Difficulty:</label>
         <select name="level">
@@ -28,6 +28,7 @@
                 {% for j in range(9) %}
                     <input type="text" maxlength="1" name="cell{{i}}{{j}}" 
                         value="{{ puzzle[i][j] if puzzle[i][j] != 0 else '' }}"
+                        class="cell-animate"
                         oninput="validateCell(this)">
                 {% endfor %}
             {% endfor %}
@@ -50,6 +51,8 @@
             if (value && (!/^[1-9]$/.test(value))) {
                 mistakes++;
                 document.getElementById("mistakes").textContent = mistakes;
+                input.classList.add("shake");
+                setTimeout(() => input.classList.remove("shake"), 300);
                 input.value = '';
             }
         }
