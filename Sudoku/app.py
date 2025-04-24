@@ -1,26 +1,24 @@
-from flask import Flask, render_template, request
-import sudoku
+from flask import Flask, render_template, request, redirect, url_for, session
+from sudoku import generate_puzzle, solve_board
 
 app = Flask(__name__)
+app.secret_key = 'sudoku-secret'
 
-@app.route("/", methods=["GET"])
+@app.route('/')
 def index():
-    difficulty = request.args.get("level", "easy")
-    puzzle = sudoku.generate_puzzle(difficulty)
-    return render_template("index.html", puzzle=puzzle, difficulty=difficulty)
+    return render_template('index.html')
 
-@app.route("/solve", methods=["POST"])
-def solve():
-    board = []
-    for i in range(9):
-        row = []
-        for j in range(9):
-            val = request.form.get(f"cell{i}{j}")
-            row.append(int(val) if val and val.isdigit() else 0)
-        board.append(row)
+@app.route('/level')
+def level():
+    return render_template('level.html')
 
-    solved = sudoku.solve_board(board)
-    return render_template("index.html", puzzle=solved, difficulty="custom")
+@app.route('/game', methods=['POST'])
+def game():
+    level = request.form.get('level')
+    puzzle = generate_puzzle(level)
+    session['puzzle'] = puzzle
+    session['solution'] = solve_board([row[:] for row in puzzle])
+    return render_template('game.html', puzzle=puzzle, level=level)
 
 if __name__ == '__main__':
     app.run(debug=True)
