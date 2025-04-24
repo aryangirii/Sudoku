@@ -2,16 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Select Difficulty Level</title>
+  <title>Welcome to Sudoku</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <div class="container">
-    <h1>Select Difficulty Level</h1>
+    <h1>Welcome to Sudoku</h1>
+    <p>Choose a level to start the game:</p>
     <div class="button-group">
-      <a href="{{ url_for('game', level='easy') }}" class="button">Easy</a>
-      <a href="{{ url_for('game', level='medium') }}" class="button">Medium</a>
-      <a href="{{ url_for('game', level='hard') }}" class="button">Hard</a>
+      <a href="{{ url_for('level') }}" class="button">Start Game</a>
     </div>
   </div>
 </body>
