@@ -1,79 +1,52 @@
-/* Global styles */
+/* Global styling */
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f5f5;
-  transition: background-color 0.3s ease;
+  margin: 0;
+  background-color: #f9f9f9;
+  color: #333;
+  transition: all 0.3s ease;
 }
 
-.dark-mode {
-  background-color: #121212;
-  color: white;
+body.dark-mode {
+  background-color: #333;
+  color: #f9f9f9;
 }
 
 .container {
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto;
   text-align: center;
 }
 
-.header h1 {
+.header {
+  margin-bottom: 20px;
+}
+
+h1 {
   font-size: 2rem;
-  margin-bottom: 10px;
 }
 
 .game-info {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   margin-bottom: 20px;
-}
-
-button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  margin: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-button:focus {
-  outline: none;
-}
-
-.theme-toggle {
-  background-color: #2196F3;
-}
-
-.new-game {
-  background-color: #FF5722;
-}
-
-.exit-game {
-  background-color: #FF4081;
 }
 
 .sudoku-grid {
   display: grid;
-  grid-template-columns: repeat(9, 40px);
+  grid-template-columns: repeat(9, 1fr);
   gap: 5px;
-  justify-content: center;
-  margin-top: 20px;
 }
 
 .sudoku-row {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 5px;
 }
 
 .sudoku-cell {
@@ -82,62 +55,42 @@ button:focus {
   text-align: center;
   font-size: 1.5rem;
   border: 1px solid #ccc;
-  border-radius: 5px;
   background-color: #fff;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .sudoku-cell.correct {
-  background-color: #4CAF50;
-  border-color: #388E3C;
+  background-color: #c8e6c9; /* Light green for correct */
 }
 
 .sudoku-cell.wrong {
-  background-color: #FF5722;
-  border-color: #D32F2F;
+  background-color: #f8d7da; /* Light red for wrong */
 }
 
-.sudoku-cell:focus {
-  outline: none;
+button {
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
 }
 
-button:active {
-  background-color: #3e8e41;
-}
-
-.dark-mode .theme-toggle {
-  background-color: #f1f1f1;
-  color: black;
-}
-
-.dark-mode button {
-  background-color: #333;
+.theme-toggle {
+  background-color: #007bff;
   color: white;
 }
 
-.game-info span {
-  font-size: 1rem;
+.new-game {
+  background-color: #28a745;
+  color: white;
 }
 
-/* Responsive design for mobile */
-@media (max-width: 600px) {
-  .sudoku-grid {
-    grid-template-columns: repeat(9, 30px);
-    gap: 3px;
-  }
+.exit-game {
+  background-color: #dc3545;
+  color: white;
+}
 
-  .sudoku-cell {
-    width: 30px;
-    height: 30px;
-    font-size: 1rem;
-  }
-
-  .header h1 {
-    font-size: 1.5rem;
-  }
-
-  button {
-    font-size: 0.9rem;
-    padding: 8px 16px;
-  }
+button:hover {
+  opacity: 0.8;
 }
