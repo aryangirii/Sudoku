@@ -3,11 +3,13 @@ body {
     text-align: center;
     background-color: #f5f6fa;
     padding: 20px;
+    animation: fadeInBody 1s ease-in-out;
 }
 
 h1 {
     color: #2c3e50;
     margin-bottom: 20px;
+    animation: fadeInUp 1s ease-out;
 }
 
 .sudoku-board {
@@ -25,6 +27,16 @@ h1 {
     font-size: 18px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    transition: background-color 0.2s ease, transform 0.2s;
+}
+
+.sudoku-board input:focus {
+    background-color: #d1f2eb;
+    outline: none;
+}
+
+.cell-animate {
+    animation: fadeInCell 0.5s ease-in-out;
 }
 
 .info-bar {
@@ -34,6 +46,7 @@ h1 {
     font-size: 18px;
     color: #2c3e50;
     margin: 15px 0;
+    animation: fadeInUp 1s ease-out 0.5s forwards;
 }
 
 button {
@@ -44,6 +57,7 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover {
@@ -54,4 +68,31 @@ select {
     padding: 5px;
     font-size: 16px;
     margin-right: 10px;
+}
+
+.shake {
+    animation: shake 0.3s;
+}
+
+@keyframes fadeInBody {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeInUp {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+@keyframes fadeInCell {
+    from {opacity: 0; transform: scale(0.9);}
+    to {opacity: 1; transform: scale(1);}
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
 }
