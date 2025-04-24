@@ -1,76 +1,64 @@
 import random
-import copy
 
-def generate_full_board():
+
+def generate_puzzle(level):
     board = [[0 for _ in range(9)] for _ in range(9)]
+    solve_board(board)
+    
+    if level == 'easy':
+        removals = 30
+    elif level == 'medium':
+        removals = 40
+    else:
+        removals = 50
 
-    def is_valid(board, row, col, num):
-        for i in range(9):
-            if board[row][i] == num or board[i][col] == num:
-                return False
-        start_row, start_col = 3 * (row // 3), 3 * (col // 3)
-        for i in range(start_row, start_row + 3):
-            for j in range(start_col, start_col + 3):
-                if board[i][j] == num:
-                    return False
-        return True
+    while removals > 0:
+        row = random.randint(0, 8)
+        col = random.randint(0, 8)
+        if board[row][col] != 0:
+            board[row][col] = 0
+            removals -= 1
 
-    def solve(board):
-        for row in range(9):
-            for col in range(9):
-                if board[row][col] == 0:
-                    nums = list(range(1, 10))
-                    random.shuffle(nums)
-                    for num in nums:
-                        if is_valid(board, row, col, num):
-                            board[row][col] = num
-                            if solve(board):
-                                return True
-                            board[row][col] = 0
-                    return False
-        return True
-
-    solve(board)
     return board
 
-def generate_puzzle(difficulty="easy"):
-    board = generate_full_board()
-    puzzle = copy.deepcopy(board)
-    removals = {"easy": 30, "medium": 40, "hard": 50}
-    attempts = removals.get(difficulty, 30)
-
-    while attempts > 0:
-        row, col = random.randint(0, 8), random.randint(0, 8)
-        while puzzle[row][col] == 0:
-            row, col = random.randint(0, 8), random.randint(0, 8)
-        puzzle[row][col] = 0
-        attempts -= 1
-    return puzzle
 
 def solve_board(board):
-    def is_valid(board, row, col, num):
-        for i in range(9):
-            if board[row][i] == num or board[i][col] == num:
+    empty = find_empty(board)
+    if not empty:
+        return board
+
+    row, col = empty
+    for num in range(1, 10):
+        if valid(board, num, (row, col)):
+            board[row][col] = num
+            if solve_board(board):
+                return board
+            board[row][col] = 0
+
+    return False
+
+
+def valid(board, num, pos):
+    for i in range(9):
+        if board[pos[0]][i] == num and pos[1] != i:
+            return False
+        if board[i][pos[1]] == num and pos[0] != i:
+            return False
+
+    box_x = pos[1] // 3
+    box_y = pos[0] // 3
+
+    for i in range(box_y * 3, box_y * 3 + 3):
+        for j in range(box_x * 3, box_x * 3 + 3):
+            if board[i][j] == num and (i, j) != pos:
                 return False
-        start_row, start_col = 3 * (row // 3), 3 * (col // 3)
-        for i in range(start_row, start_row + 3):
-            for j in range(start_col, start_col + 3):
-                if board[i][j] == num:
-                    return False
-        return True
 
-    def solve(board):
-        for row in range(9):
-            for col in range(9):
-                if board[row][col] == 0:
-                    for num in range(1, 10):
-                        if is_valid(board, row, col, num):
-                            board[row][col] = num
-                            if solve(board):
-                                return True
-                            board[row][col] = 0
-                    return False
-        return True
+    return True
 
-    solve(board)
-    return board
+
+def find_empty(board):
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] == 0:
+                return (i, j)
+    return None
